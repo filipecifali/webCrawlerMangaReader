@@ -6,16 +6,15 @@ import os
 from BeautifulSoup import BeautifulSoup
 
 base_url = 'http://mangareader.net'
-target = 'one-piece' # Change to whatever manga you need :)
+target = 'air-gear'
 user_agent = 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)'
 headers = { 'User-Agent' : user_agent }
 directory = '/Users/filipecifalistangler/Downloads/manga/'
-startFrom = 0 # If the download should start from a precise chapter(default is 0, sometimes, -1 is needed, depending
-# on the page itself and the links).
+start_from = 330 # Start from what link?
 
-urlChapters = []
-listUrl = []
-listUrl2 = []
+url_chapters = []
+list_url = []
+list_url2 = []
 
 request = urllib2.Request(base_url+'/'+target, headers = headers)
 response = urllib2.urlopen(request)
@@ -24,53 +23,50 @@ soup = BeautifulSoup(document)
 links = soup.findAll('a')
 
 for link in links:
-    urlChapters.append(base_url+link['href'])
+    url_chapters.append(base_url+link['href'])
 
-def listCreator(url, type, grab):
-    gUrl = url
-    grequest = urllib2.Request(gUrl, headers = headers)
-    gresponse = urllib2.urlopen(grequest)
-    gdocument = gresponse.read()
-    gsoup = BeautifulSoup(gdocument)
-    glinks = gsoup.findAll('%s' %type)
-    for link in glinks:
-        if type == 'option':
-            listUrl.append(link['%s' %grab])
-        else:
-            listUrl2.append(link['%s' %grab])
+def ListCreator(url, type, grab, array):
+    # Global vars
+    g_url = url
+    g_request = urllib2.Request(g_url, headers = headers)
+    g_response = urllib2.urlopen(g_request)
+    g_document = g_response.read()
+    g_soup = BeautifulSoup(g_document)
+    g_links = g_soup.findAll('%s' %type)
+    for link in g_links:
+        array.append(link['%s' %grab])
 
-def createDir(url):
+def CreateDir(url):
     name = url
-    splitedName = name.split('/')
+    splited_name = name.split('/')
     dir = directory+target+'/'
-    dirChapter = dir+splitedName[-1]+'/'
+    dir_chapter = dir+splited_name[-1]+'/'
     if not os.path.exists(dir):
         os.mkdir(dir)
-    if not os.path.exists(dirChapter):
-        os.mkdir(dirChapter)
-    return dirChapter
+    if not os.path.exists(dir_chapter):
+        os.mkdir(dir_chapter)
+    return dir_chapter
 
-startFrom += 20
-finalUrls = urlChapters[startFrom:]
-final = finalUrls[:(len(finalUrls)-8)]
+start_from += 20
+final_urls = url_chapters[start_from:]
+final = final_urls[:(len(final_urls)-8)]
 
 for list in final:
-    dirTarget = createDir(list)
-    listUrl = []
-    listCreator(list, 'option', 'value')
-    for urls in listUrl:
-        listUrl2 = []
-        listCreator(base_url+urls, 'img', 'src')
-        saveDir = os.path.join(dirTarget, listUrl2[-1].split('/')[-1])
-        if not os.path.exists(saveDir):
-            urlretrieve(listUrl2[-1], saveDir)
-            print listUrl2[-1], "saved in:", saveDir
+    dir_target = CreateDir(list)
+    list_url = []
+    ListCreator(list, 'option', 'value', list_url)
+    for urls in list_url:
+        list_url2 = []
+        ListCreator(base_url+urls, 'img', 'src',list_url2)
+        save_dir = os.path.join(dir_target, list_url2[-1].split('/')[-1])
+        if not os.path.exists(save_dir):
+            urlretrieve(list_url2[-1], save_dir)
+            print list_url2[-1], "saved in:", save_dir
         else:
-            # Check if the download it's a Zero-Sized / Broken file.
-            if int(urllib.urlopen(listUrl2[-1]).info()['Content-Length']) == os.stat(saveDir).st_size:
-                print listUrl2[-1], "Already downloaded, skipping to next..."
+            if int(urllib.urlopen(list_url2[-1]).info()['Content-Length']) == os.stat(save_dir).st_size:
+                print list_url2[-1], "Already downloaded, skipping to next..."
             else:
-                print "Online Length:", int(urllib.urlopen(listUrl2[-1]).info()['Content-Length'])
-                print "Local Length:", os.stat(saveDir).st_size
-                urlretrieve(listUrl2[-1], saveDir)
-                print listUrl2[-1], "downloading again, the size of the file differs from our."
+                print "Online Length:", int(urllib.urlopen(list_url2[-1]).info()['Content-Length'])
+                print "Local Length:", os.stat(save_dir).st_size
+                urlretrieve(list_url2[-1], save_dir)
+                print list_url2[-1], "downloading again, the size of the file differs from our."
