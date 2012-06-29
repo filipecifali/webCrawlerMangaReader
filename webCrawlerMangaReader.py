@@ -1,16 +1,24 @@
 __author__ = 'cifali dot filipe at gmail dot com'
 
+''' # TODO #
+ Make a cleaner way to grab the first link, maybe re can help
+ Faster list usage, this list is a bit slow to be used
+ Create directory w/a cleaner name (w/o .html "attached")
+ Multiple headers may be used, build a list and randonize the usage
+ Learn more and more @_@"
+'''
+
 import urllib2, urllib
 from urllib import urlretrieve
 import os
 from BeautifulSoup import BeautifulSoup
 
-base_url = 'http://mangareader.net'
+base_url = 'http://mangareader.net' # it can be traded for http://mangapanda.com also.
 target = 'air-gear'
 user_agent = 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)'
 headers = { 'User-Agent' : user_agent }
-directory = '/Users/filipecifalistangler/Downloads/manga/'
-start_from = 330 # Start from what link?
+directory = '/Users/filipecifalistangler/Downloads/manga/' # Where should be saved!
+start_from = 350 # Start from what link?
 
 url_chapters = []
 list_url = []
@@ -36,7 +44,7 @@ def ListCreator(url, type, grab, array):
     for link in g_links:
         array.append(link['%s' %grab])
 
-def CreateDir(url):
+def createDir(url):
     name = url
     splited_name = name.split('/')
     dir = directory+target+'/'
@@ -52,7 +60,7 @@ final_urls = url_chapters[start_from:]
 final = final_urls[:(len(final_urls)-8)]
 
 for list in final:
-    dir_target = CreateDir(list)
+    dir_target = createDir(list)
     list_url = []
     ListCreator(list, 'option', 'value', list_url)
     for urls in list_url:
