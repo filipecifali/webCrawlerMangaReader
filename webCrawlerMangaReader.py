@@ -24,14 +24,14 @@ url_chapters = []
 list_url     = []
 list_url2    = []
 
-request  = urllib2.Request(base_url+'/'+target, headers = headers)
+request  = urllib2.Request(base_url + '/' + target, headers = headers)
 response = urllib2.urlopen(request)
 document = response.read()
 soup     = BeautifulSoup(document)
 links    = soup.findAll('a')
 
 for link in links:
-    url_chapters.append(base_url+link['href'])
+    url_chapters.append(base_url + link['href'])
 
 def listCreator(url, tag, attribute, array):
     
@@ -49,8 +49,8 @@ def listCreator(url, tag, attribute, array):
 def createDir(url):
     
     splited_name = url.split('/')
-    dir_target   = directory+target+'/'
-    dir_chapter  = dir_target+splited_name[-1]+'/'
+    dir_target   = directory + target + '/'
+    dir_chapter  = dir_target + splited_name[-1] + '/'
 
     if not os.path.exists(dir_target):
         os.mkdir(dir_target)
