@@ -33,14 +33,14 @@ links = soup.findAll('a')
 for link in links:
     url_chapters.append(base_url+link['href'])
 
-def ListCreator(url, type, grab, array):
+def ListCreator(url, type_l, grab, array):
     # Global vars
     g_url = url
     g_request = urllib2.Request(g_url, headers = headers)
     g_response = urllib2.urlopen(g_request)
     g_document = g_response.read()
     g_soup = BeautifulSoup(g_document)
-    g_links = g_soup.findAll('%s' %type)
+    g_links = g_soup.findAll('%s' %type_l)
     for link in g_links:
         array.append(link['%s' %grab])
 
@@ -59,10 +59,10 @@ start_from += 20
 final_urls = url_chapters[start_from:]
 final = final_urls[:(len(final_urls)-8)]
 
-for list in final:
-    dir_target = createDir(list)
+for list_f in final:
+    dir_target = createDir(list_f)
     list_url = []
-    ListCreator(list, 'option', 'value', list_url)
+    ListCreator(list_f, 'option', 'value', list_url)
     for urls in list_url:
         list_url2 = []
         ListCreator(base_url+urls, 'img', 'src',list_url2)
